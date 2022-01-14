@@ -1,0 +1,3 @@
+{
+  "error": "Invalid course weights. Course has id: 1, weight total is not 100. Total: 110"
+}
