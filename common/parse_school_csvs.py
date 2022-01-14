@@ -1,5 +1,5 @@
 # General imports
-import sys
+import os
 import csv
 
 # Local imports
@@ -21,17 +21,19 @@ bad_columns_msg = 'Columns in input file {0} are insufficient. It does not conta
 
 
 # Validate input file row, column's which are cross checked determined by list of columns at input_columns[file_count]
-def validate_input_rows(file_count: int, file_name: str, csv_row: dict):
+def validate_input_rows(file_count: int, file_name: str, csv_row: dict, csv_file):
     """
     :param file_name: name of input csv file which provides csv_row
     :param csv_row: example row from input csv
     :param file_count: file count specifying which input file's rows are being validated
+    :param csv_file: File where the rows are from, kept in reference to close it upon error
     :return: Nothing, throws error and halts execution if invalid/insufficient columns are provided
     """
     for c in input_columns[file_count]:
         try:  # See if csv_row parsed from input file at file_name has necessary args for it's position in sys args.
             v = csv_row[c]
         except KeyError:  # Desired column name not found in provided csv row, input csv file has invalid rows
+            csv_file.close()
             handle_error(bad_columns_msg.format(file_name, c))
 
 
@@ -48,11 +50,16 @@ def generate_school_data_row_lists(input_files: list[str]):
     for f in input_files:
         try:  # Try to read input file
             csv_file = open(f, mode='r')
+
+            if os.stat(f).st_size == 0:  # Ensure that the provided file has data in it, else halt execution
+                csv_file.close()  # Close file as execution will stop
+                handle_error(f'Input file: {f}, has no data in it.')
+
             csv_as_rows = list(csv.DictReader(csv_file))  # Retrieve data from csv as list with rows as dicts
 
             for r in csv_as_rows:
                 # Validate rows for input file (uses first row as sample)
-                validate_input_rows(file_count, f, r)
+                validate_input_rows(file_count, f, r, csv_file)
                 # Strip extra spaces from beginning and end of row entries (e.g. " Mrs. P  " -> "Mrs. P")
                 for k in r:
                     r[k] = r[k].strip()

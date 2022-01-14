@@ -56,3 +56,31 @@ each course a student took, we can calculate total average for that student (acr
 At this stage, we have all the information we need, so we work with `generate_school_data_json_object` in main.py to
 create the final json dict object. This object is then sent to `main.py`'s JSONWriter in order to be written to the
 output file path.
+
+# Testing
+
+An example run of `main.py` can be conducted with the tests in `test_admin_tool.py`, or from command line. 
+`test_admin_tool.py` utilizes the `unittest` library for Python. The types of tests it runs ranges from empty inputs,
+bad column names, duplicate entries, to working examples provided by the spec (for reference, the files in Example1 and 
+Example2). It is able to verify that two JSON objects are equal, these can be from files and, or passed in dictionaries.
+It not only checks for correct JSON objects (regardless of the order of items in the JSON dicts/files), it also ensures 
+that the correct system exit code was provided (`-1` `for error, `0` for success).
+
+If the `test_admin_tool.py` is not your cup of tea, you can also run its suite of tests by utilizing the below CLI
+commands (from the source directory containing `main.py`):
+
+**Tests which succeed**
+
+- `python main.py tests/Example1/courses.csv tests/Example1/students.csv tests/Example1/tests.csv tests/Example1/marks.csv tests/test_outputs/outputExample1.json`
+- `python main.py tests/Example2/courses.csv tests/Example2/students.csv tests/Example2/tests.csv tests/Example2/marks.csv tests/test_outputs/outputExample2.json`
+- `python main.py tests/Example3ColsNoRows/courses.csv tests/Example3ColsNoRows/students.csv tests/Example3ColsNoRows/tests.csv tests/Example3ColsNoRows/marks.csv tests/test_outputs/outputExample3ColsNoRows.json`
+
+**Tests which are meant to fail**
+
+- `python main.py tests/Example4RowsNoCols/courses.csv tests/Example4RowsNoCols/students.csv tests/Example4RowsNoCols/tests.csv tests/Example4RowsNoCols/marks.csv tests/test_outputs/outputExample4RowsNoCols.json`
+- `python main.py tests/Example5BadTestWeights/courses.csv tests/Example5BadTestWeights/students.csv tests/Example5BadTestWeights/tests.csv tests/Example5BadTestWeights/marks.csv tests/test_outputs/outputExample5BadTestWeights.json`
+- `python main.py tests/Example6BadArguments/courses.csv tests/Example6BadArguments/students.csv tests/Example6BadArguments/tests.csv tests/Example6BadArguments/marks.csv tests/test_outputs/outputExample6BadArguments.json`
+- `python main.py tests/Example7DuplicateStudents/courses.csv tests/Example7DuplicateStudents/students.csv tests/Example7DuplicateStudents/tests.csv tests/Example7DuplicateStudents/marks.csv tests/test_outputs/outputExample7DuplicateStudents.json`
+- `python main.py tests/Example8DuplicateCourses/courses.csv tests/Example8DuplicateCourses/students.csv tests/Example8DuplicateCourses/tests.csv tests/Example8DuplicateCourses/marks.csv tests/test_outputs/outputExample8DuplicateCourses.json`
+- `python main.py tests/Example9DuplicateTests/courses.csv tests/Example9DuplicateTests/students.csv tests/Example9DuplicateTests/tests.csv tests/Example9DuplicateTests/marks.csv tests/test_outputs/outputExample9DuplicateTests.json`
+- `python main.py tests/Example0EmptyFiles/courses.csv tests/Example0EmptyFiles/students.csv tests/Example0EmptyFiles/tests.csv tests/Example0EmptyFiles/marks.csv tests/test_outputs/outputExample0EmptyFiles.json`

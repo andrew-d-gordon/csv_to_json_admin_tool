@@ -1,0 +1,3 @@
+{
+  "error": "Duplicate found with id 1. Found with row: {'id': '1', 'course_id': '2', 'weight': '10'}"
+}

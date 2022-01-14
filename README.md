@@ -11,5 +11,5 @@ tests/test_outputs/output.json”`
 Refer to spec.md or files in tests/Example1 to understand how csv inputs should be formatted.
 
 **Use**:
-This project should not be utilized in relation to solving the same coding challenge on Hatchways. This is my personal
-implementation for a company assessment. 
+This project should not be utilized in relation to solving the same coding challenge on Hatchways. This is my, Andrew 
+Gordon's, implementation for a company assessment. 

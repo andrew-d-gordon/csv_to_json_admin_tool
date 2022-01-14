@@ -78,8 +78,109 @@ def generate_school_data_json_object(students: dict, courses: dict):
     return json_sd_output
 
 
+# Compute student averages (course averages, then total average)
+def compute_student_averages(student_data: dict):
+    """
+    :param student_data: Dictionary containing all students (as objects, keys are student ids)
+    :return: None, serves to compute course averages and total average for student
+    """
+    # Compute course averages for each student
+    for s in student_data:
+        student_data[s].compute_course_averages()
+
+    # With course averages computed, now compute total average for each student
+    for s in student_data:
+        student_data[s].compute_total_average()
+
+
+# Add test weights for courses to ensure they add up to desired amount
+def check_course_test_weights(course_data: dict, test_data: dict):
+    """
+    :param course_data: Dictionary containing all courses (as objects, keys are courses ids)
+    :param test_data: Dictionary containing all tests (as objects, keys are test ids)
+    :return: None, serves to add test weights for each course, ensures amount adds up to 100 (else error)
+    """
+    for test in test_data:
+        course_id_for_test = test_data[test].course_id
+        # Add weight to respective course, allows for validation of test weight totals for courses
+        course_data[course_id_for_test].add_test_weight(test_data[test].weight)
+
+
+# Associate course participation and test results for said course, for each student
+def associate_student_courses(student_data: dict, test_data: dict):
+    """
+    :param student_data: Dictionary containing all students (as objects, keys are student ids)
+    :param test_data: Dictionary containing all tests (as objects, keys are test ids)
+    :return: None, serves to find courses students have taken and associates their test scores for that course (id)
+    """
+    for s in student_data:
+        student = student_data[s]
+        # Correlate what courses a student is involved in from marks and tests data
+        for test in student.marks:
+            course_id_for_test = test_data[test].course_id  # Grab course id
+            try:  # Add test, mark and test weight for student's list of tests, marks and weights for a given course
+                student.courses[course_id_for_test].append((test, student.marks[test], test_data[test].weight))
+            except KeyError:  # Init list to hold tuples of tests, marks and weights for a student in given course
+                student.courses[course_id_for_test] = [(test, student.marks[test], test_data[test].weight)]
+
+
+# Associate mark data to students marks dictionary (keys: test_id, value: marks aka test score)
+def associate_student_marks(student_data: dict, marks_rows: list):
+    """
+    :param student_data: Dictionary containing all students (as objects, keys are student ids)
+    :param marks_rows: List containing rows parsed from marks input file
+    :return: None, serves to parse rows in marks and save off test information to student's marks dict (test results)
+    """
+    for r in marks_rows:
+        try:  # Try to associate test and student test score (mark) with student
+            student_id = int(r['student_id'])
+            test_id = int(r['test_id'])
+            student = student_data[student_id]
+            student.marks[test_id] = int(r['mark'])  # Convert student marks for test (test score) to integer
+        except KeyError:  # If no such student exists in the database, through an error due to bad entry in marks
+            handle_error(f'No such student with id {r["student_id"]} exists. Found in marks with row: {r}')
+
+
+# Function to generate a dictionary of objects from rows of input data (type can be set to Course, Student, or Test)
+def generate_data_dict(input_rows: list, isCourse: bool = False, isStudent: bool = False, isTest: bool = False):
+    """
+    :param input_rows: Contains each row in csv file containing course data
+    :param isCourse: boolean to determine whether rows being processed are course data
+    :param isStudent: boolean to determine whether rows being processed are student data
+    :param isTest: boolean to determine whether rows being processed are test data
+    :return: a dictionary of objects with keys as the data id of the row (type determined by boolean arguments)
+    """
+    data = {}
+    for r in input_rows:
+        data_id = int(r['id'])  # Convert object (row) id to integer
+        try:  # Check for duplicates, if object with duplicate id is received, produce error
+            v = data[data_id]
+            handle_error(f'Duplicate found with id {data_id}. Found with row: {r}')
+        except KeyError:  # Unique object
+            if isCourse:
+                data[data_id] = Course(data_id, r['name'], r['teacher'])
+            elif isStudent:
+                data[data_id] = Student(data_id, r['name'])
+            elif isTest:
+                data[data_id] = Test(data_id, int(r['course_id']), int(r['weight']))
+
+    return data
+
+
 # Serves to process data from input files and convert them to json
 def process_admin_data(courses_file: str, students_file: str, tests_file: str, marks_file: str, output_file: str):
+    """
+    This is the main driver function for this library. It is separated from the main start below so one can write unit
+    test cases from other files and directly call this function. Such a file that makes use of this is the unit test
+    file for this library called docs/test_admin_tool.py.
+
+    :param courses_file: Contains path to courses csv file
+    :param students_file: Contains path to students csv file
+    :param tests_file: Contains path to tests csv file
+    :param marks_file: Contains path to marks csv file
+    :param output_file: Contains path to desired output file
+    :return: Nothing, this function cues the parsing of input data, correlation between inputs, generating output JSON
+    """
 
     # Set JSONWriter object output file path, validates permission to use output file as well
     json_writer.set_json_writer_output_file(output_file)
@@ -92,76 +193,23 @@ def process_admin_data(courses_file: str, students_file: str, tests_file: str, m
                                                                                           tests_file,
                                                                                           marks_file])
 
-    # print(f'Lists of rows for courses, students, tests, and marks:\n'
-    #       f'{courses_rows}\n{students_rows}\n{tests_rows}\n{marks_rows}')
-
     # After lists of rows for each input file have been generated, we generate dicts to hold courses, students and tests
-    # Generating course data dict to hold course objects (one for each course parsed from input file)
-    course_data = {}
-    for r in courses_rows:
-        course_id = int(r['id'])  # Convert course id to integer
-        try:  # Check for duplicates, if course with duplicate id is received, produce error
-            v = course_data[course_id]
-            handle_error(f'Duplicate course found with id {course_id}. Found in course_data with row: {r}')
-        except KeyError:  # Unique course
-            course_data[course_id] = Course(course_id, r['name'], r['teacher'])
-
-    # Generating student data dict to hold student objects (one for each student parsed from input file)
-    student_data = {}
-    for r in students_rows:
-        student_id = int(r['id'])  # Convert student id to integer
-        try:  # Check for duplicates, if student with duplicate id is received, produce error
-            v = student_data[student_id]
-            handle_error(f'Duplicate student found with id {student_id}. Found in student_data with row: {r}')
-        except KeyError:  # Unique student
-            student_data[student_id] = Student(student_id, r['name'])
-
-    # Generating test data list to hold test objects (one for each student parsed from input file)
-    # After this step, we can validate the courses by guaranteeing the weights of tests in a class add up to 100
-    test_data = {}
-    for r in tests_rows:
-        test_id = int(r['id'])  # Convert test id to integer
-        try:  # Check for duplicates, if test with duplicate id is received, produce error
-            v = test_data[test_id]
-            handle_error(f'Duplicate test found with id {test_id}. Found in test_data with row: {r}')
-        except KeyError:  # Unique test
-            test_data[test_id] = Test(test_id, int(r['course_id']), int(r['weight']))
+    # Generating Course, Student and Test data dict to hold objects representing rows in respective input files
+    course_data = generate_data_dict(courses_rows, isCourse=True)
+    student_data = generate_data_dict(students_rows, isStudent=True)
+    test_data = generate_data_dict(tests_rows, isTest=True)
 
     # We can parse marks to correlate tests with students, and by proxy correlate student to courses they are in
-    for r in marks_rows:
-        try:  # Try to associate test and student test score (mark) with student
-            student_id = int(r['student_id'])
-            test_id = int(r['test_id'])
-            student = student_data[student_id]
-            student.marks[test_id] = int(r['mark'])  # Convert mark to integer
-        except KeyError:  # If no such student exists in the database, through an error due to bad entry in marks
-            handle_error(f'No such student with id {r["student_id"]} exists. Found in marks with row: {r}')
+    associate_student_marks(student_data, marks_rows)
 
     # Fill out student's courses dictionary with courses and respective tests, test weights, and student's test marks
-    for s in student_data:
-        student = student_data[s]
-        # Correlate what courses a student is involved in from marks and tests data
-        for test in student.marks:
-            course_id_for_test = test_data[test].course_id  # Grab course id
-            try:  # Add test, mark and test weight for student's list of tests, marks and weights for a given course
-                student.courses[course_id_for_test].append((test, student.marks[test], test_data[test].weight))
-            except KeyError:  # Init list to hold tuples of tests, marks and weights for a student in given course
-                student.courses[course_id_for_test] = [(test, student.marks[test], test_data[test].weight)]
+    associate_student_courses(student_data, test_data)
 
-    # Attribute tests to courses by counting the test weights, if a courses total weight exceeds 100, error thrown
-    for test in test_data:
-        course_id_for_test = test_data[test].course_id
-        # Add weight to respective course, allows for validation of test weight totals for courses
-        course_data[course_id_for_test].add_test_weight(test_data[test].weight)
+    # We can validate the courses by guaranteeing the weights of tests in a class add up to desired amount (default 100)
+    check_course_test_weights(course_data, test_data)
 
-    # Compute course averages for each student
-    for s in student_data:
-        # print(f"Student {s} courses and test scores: {student_data[s].courses}")
-        student_data[s].compute_course_averages()
-
-    # With course averages computed, now compute total average for each student
-    for s in student_data:
-        student_data[s].compute_total_average()
+    # Compute averages for students in student_data
+    compute_student_averages(student_data)
 
     # Generate school data json object for output
     json_output = generate_school_data_json_object(student_data, course_data)
@@ -169,7 +217,8 @@ def process_admin_data(courses_file: str, students_file: str, tests_file: str, m
     # Write school data json object to output file
     json_writer.write_json_to_output_file(json_output)
 
-    # Exit successfully
+    # Print successful finish and exit
+    print(f'Execution finished successfully, output can be viewed at {output_file}')
     sys.exit(0)
 
 
@@ -191,11 +240,12 @@ def supply_arguments():
 
 # Example run of main.py
 # python main.py courses.csv students.csv tests.csv marks.csv output.json
-# Main Driver
 if __name__ == '__main__':
-    print("Starting admin tool...")
+    print("Starting admin tool from main...")
     # Retrieve command line arguments and store necessary file paths (args validated in supply_arguments), create writer
     courses_file_path, students_file_path, tests_file_path, marks_file_path, output_file_path = supply_arguments()
 
     # Send file paths from supplied arguments to process_admin_data
     process_admin_data(courses_file_path, students_file_path, tests_file_path, marks_file_path, output_file_path)
+
+    sys.exit(0)

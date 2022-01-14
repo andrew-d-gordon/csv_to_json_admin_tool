@@ -29,8 +29,6 @@ class Student:
 
             self.course_averages[c] = round(course_average, 2)  # Store course average for course, rounded to 2 decimals
 
-        print("Student with id and course averages:", self.id, self.course_averages)
-
     # Generate total average for a student given courses with a course average for the student
     def compute_total_average(self):
         courses_taken = 0

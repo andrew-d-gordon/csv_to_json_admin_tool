@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="24ed10bd-1c90-4ae0-afbd-8953bd019aab" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/csv_to_json_admin_tool.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/csv_to_json_admin_tool.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/parse_school_csvs.py" beforeDir="false" afterPath="$PROJECT_DIR$/common/parse_school_csvs.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/common/student.py" beforeDir="false" afterPath="$PROJECT_DIR$/common/student.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/design.md" beforeDir="false" afterPath="$PROJECT_DIR$/docs/design.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/docs/spec.md" beforeDir="false" afterPath="$PROJECT_DIR$/docs/spec.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/test_admin_tool.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/test_outputs/output.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/test_outputs/output2.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/test_outputs/outputExample6BadArguments.json" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_outputs/outputExample6BadArguments.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/test_outputs/outputExample7DuplicateStudents.json" beforeDir="false" afterPath="$PROJECT_DIR$/tests/test_outputs/outputExample7DuplicateStudents.json" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectId" id="23gLDdSdBEOjEMeYffFrqeBvpHu" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/test_admin_tool.py" />
+  </component>
+  <component name="RunManager">
+    <configuration name="test_admin_tool.py" type="PythonConfigurationType" factoryName="Python">
+      <module name="csv_to_json_admin_tool" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="C:\Projects\Poly-NS-Tuner\venv\Scripts\python.exe" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/test_admin_tool.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="24ed10bd-1c90-4ae0-afbd-8953bd019aab" name="Changes" comment="" />
+      <created>1642150665190</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1642150665190</updated>
+    </task>
+    <servers />
+  </component>
+</project>

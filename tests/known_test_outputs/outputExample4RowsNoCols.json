@@ -1,0 +1,3 @@
+{
+  "error": "Columns in input file tests/Example4RowsNoCols/courses.csv are insufficient. It does not contain necessary column: id."
+}
